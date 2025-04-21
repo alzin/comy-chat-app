@@ -113,7 +113,7 @@ export const addToGroup = async (req: Request, res: Response) => {
     }
     
     // Check if requesting user is admin
-    if (chat.admin.toString() !== adminId) {
+    if (!chat.admin || chat.admin.toString() !== adminId) {
       return res.status(403).json({ message: 'Only admin can add users' });
     }
     
@@ -153,7 +153,7 @@ export const removeFromGroup = async (req: Request, res: Response) => {
     }
     
     // Check if requesting user is admin
-    if (chat.admin.toString() !== adminId) {
+    if (!chat.admin || chat.admin.toString() !== adminId) {
       return res.status(403).json({ message: 'Only admin can remove users' });
     }
     

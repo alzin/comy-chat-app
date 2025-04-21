@@ -1,6 +1,7 @@
 import Message from '../models/Message';
 import Chat from '../models/Chat';
 import { Request, Response } from 'express';
+import mongoose from 'mongoose';
 
 interface MessageInput {
   chat: string; // chat ID
@@ -69,10 +70,12 @@ export const markAsRead = async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'Message not found' });
     }
     
-    // Add user to readBy array if not already there
-    if (!message.readBy.includes(userId)) {
-      message.readBy.push(userId);
-      await message.save();
+    // 👇 Convert string to ObjectId
+    const userObjectId = new mongoose.Types.ObjectId(userId);
+
+    // 👇 Use ObjectId-safe comparison
+    if (!message.readBy.includes(userObjectId)) {
+      message.readBy.push(userObjectId);
     }
     
     res.status(200).json({ message: 'Message marked as read' });
