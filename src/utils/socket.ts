@@ -9,7 +9,8 @@ export const initializeSocket = () => {
     socket.disconnect();
   }
 
-  socket = io('http://localhost:5000', {
+  // socket = io('http://localhost:5000', {
+  socket = io('https://comy-chat-app.onrender.com', {
     reconnection: true,
     reconnectionDelay: 1000,
     reconnectionDelayMax: 5000,
