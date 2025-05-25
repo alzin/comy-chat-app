@@ -13,7 +13,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ onNewChat, onProfileClick, closeMobileSidebar }) => {
   const { user, logout } = useAuthStore();
-  const { chats, setActiveChat, activeChat } = useChatStore();
+  const { chats, setActiveChat, activeChat, unreadMessages } = useChatStore();
   const [searchTerm, setSearchTerm] = useState('');
   
   const filteredChats = chats.filter(chat => {
@@ -107,7 +107,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onNewChat, onProfileClick, closeMobil
                 whileHover={{ backgroundColor: 'rgba(249, 250, 251, 1)' }}
                 whileTap={{ backgroundColor: 'rgba(243, 244, 246, 1)' }}
                 onClick={() => handleChatSelect(chat._id)}
-                className={`px-4 py-3 cursor-pointer transition-colors ${
+                className={`px-4 py-3 cursor-pointer transition-colors relative ${
                   activeChat?._id === chat._id ? 'bg-blue-50 border-l-4 border-blue-500' : ''
                 }`}
               >
@@ -126,6 +126,10 @@ const Sidebar: React.FC<SidebarProps> = ({ onNewChat, onProfileClick, closeMobil
                           <span className="absolute bottom-0 right-0 block h-3 w-3 rounded-full bg-green-500 border-2 border-white"></span>
                         )}
                       </div>
+                    )}
+                    {/* Notification dot */}
+                    {unreadMessages[chat._id] && (
+                      <span className="absolute top-0 right-0 block h-3 w-3 rounded-full bg-red-500 border-2 border-white" />
                     )}
                   </div>
                   <div className="ml-3 flex-1 min-w-0">

@@ -16,6 +16,8 @@ interface ChatStore extends ChatState {
   updateMessageReadStatus: (messageId: string, userId: string) => void;
   markCurrentMessagesAsRead: (userId: string) => void;
   typingUsers: Record<string, string[]>;
+  unreadMessages: Record<string, boolean>;
+  markChatAsRead: (chatId: string) => void;
 }
 
 export const useChatStore = create<ChatStore>((set, get) => ({
@@ -26,6 +28,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   isLoadingMessages: false,
   error: null,
   typingUsers: {},
+  unreadMessages: {},
   
   fetchChats: async () => {
     set({ isLoadingChats: true, error: null });
@@ -79,6 +82,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       
       // Mark messages as read
       get().markCurrentMessagesAsRead(localStorage.getItem('userId') || '');
+      get().markChatAsRead(chatId);
     }
   },
   
@@ -96,17 +100,25 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   },
   
   addMessage: (message) => {
-    const { messages, chats, activeChat } = get();
+    const { messages, chats, activeChat, unreadMessages } = get();
+    const userId = localStorage.getItem('userId') || '';
     
     // Update messages if it's for the active chat
     if (activeChat && message.chat === activeChat._id) {
       set({ messages: [...messages, message] });
       
       // Mark message as read if it's the active chat
-      const userId = localStorage.getItem('userId') || '';
       if (message.sender._id !== userId) {
         markMessageAsRead(message._id, userId);
       }
+    } else if (message.sender._id !== userId) {
+      // Add unread indicator for non-active chats
+      set({
+        unreadMessages: {
+          ...unreadMessages,
+          [message.chat]: true
+        }
+      });
     }
     
     // Update the latest message in chats list
@@ -209,5 +221,14 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         markMessageAsRead(message._id, userId);
       }
     });
+  },
+
+  markChatAsRead: (chatId) => {
+    set(state => ({
+      unreadMessages: {
+        ...state.unreadMessages,
+        [chatId]: false
+      }
+    }));
   }
 }));

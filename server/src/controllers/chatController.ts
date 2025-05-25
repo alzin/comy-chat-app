@@ -1,4 +1,5 @@
 import Chat from '../models/Chat';
+import User from '../models/User';
 import { Request, Response } from 'express';
 
 // Create a new chat
@@ -113,7 +114,7 @@ export const addToGroup = async (req: Request, res: Response) => {
     }
     
     // Check if requesting user is admin
-    if (!chat.admin || chat.admin.toString() !== adminId) {
+    if (chat.admin.toString() !== adminId) {
       return res.status(403).json({ message: 'Only admin can add users' });
     }
     
@@ -153,7 +154,7 @@ export const removeFromGroup = async (req: Request, res: Response) => {
     }
     
     // Check if requesting user is admin
-    if (!chat.admin || chat.admin.toString() !== adminId) {
+    if (chat.admin.toString() !== adminId) {
       return res.status(403).json({ message: 'Only admin can remove users' });
     }
     

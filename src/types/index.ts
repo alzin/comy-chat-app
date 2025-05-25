@@ -43,4 +43,5 @@ export interface ChatState {
   isLoadingChats: boolean;
   isLoadingMessages: boolean;
   error: string | null;
+  unreadMessages: Record<string, boolean>;
 }
